@@ -5,11 +5,6 @@ import logo from "../../assets/images/PriceFirst.png";
 import { NavLink } from "react-router-dom";
 import ArrowDown from "../../assets/icons/ArrowDown";
 import SubMenu from "../subMenu/SubMenu";
-import {
-  iphoneSubmenu,
-  samsungSubmenu,
-  pixelSubmenu,
-} from "../../data/subMenu/menuData.js";
 import { CloseCircle } from "iconsax-reactjs";
 
 
@@ -118,7 +113,6 @@ const Sidebar = ({ view = false, onClose }) => {
               styles["scrollbar"]
             )}
           >
-            <SubMenu brand="iphone" menu={iphoneSubmenu} type="flex" />
           </div>
           <p
             className={clsx(
@@ -141,7 +135,6 @@ const Sidebar = ({ view = false, onClose }) => {
               styles["scrollbar"]
             )}
           >
-            <SubMenu brand="samsung" menu={samsungSubmenu} type="flex" />
           </div>
           <p
             className={clsx(
@@ -162,7 +155,6 @@ const Sidebar = ({ view = false, onClose }) => {
               styles["scrollbar"]
             )}
           >
-            <SubMenu brand="google-pixel" menu={pixelSubmenu} type="flex" />
           </div>
         </div>
       </div>

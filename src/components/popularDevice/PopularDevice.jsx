@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './popularDevice.module.css'
 import iphone from '../../assets/images/iphone.png'
 import Label from '../labels/Label'
-import IconButton from '../iconButton/IconButton'
+
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
@@ -12,10 +12,24 @@ import "swiper/css/navigation";
 import GreaterThan from '../../assets/icons/GreaterThan'
 import LessThan from "../../assets/icons/LessThan";
 import { NavLink } from 'react-router-dom'
+import { getAllProducts } from '../../services/product'
+import IconButton from '../iconButton/Iconbutton';
 
 
 const PopularDevice = () => {
     const a = [1, 2, 3, 4, 5, 6, 7,8,9,10];
+
+    const [popularProducts, setPopularProducts] = useState([]);
+
+    useEffect(()=>{
+      const fetchprducts = async ()=>{
+        const data = await getAllProducts();
+        console.log(data);
+        setPopularProducts(data.products)
+      }
+
+      fetchprducts();
+    },[])
   return (
     <div className={styles["popular-width"]}>
       <h2 className={styles["popular-heading"]}>Popular Devices Right Now</h2>
@@ -45,25 +59,22 @@ const PopularDevice = () => {
           1300: { slidesPerView: 6 },
         }}
       >
-        {a.map((value) => {
+        {popularProducts.map((value) => {
           return (
-            <SwiperSlide key={value}>
-              <NavLink to="/iphone/iphone-16-pro-max" >
+            <SwiperSlide key={value._id}>
+              <NavLink to={`/product/${value.slug}`} >
                 <div className={styles["popular-box"]}>
-                  <div className={styles["popular-image"]}>
-                    <img src={iphone} width="148px" />
+                    <img src={value.productImg} width="200px" />
                     <Label
                       size="md"
                       className={styles["popualr-label"]}
                       success={true}
                       text="popular"
                     />
-                  </div>
                   <div className={styles["popular-content"]}>
-                    <p className={styles["popular-title"]}>iPhone 16 Pro Max</p>
+                    <p className={styles["popular-title"]}>{value.title}</p>
                     <p className={styles["popular-price"]}>
-                      <span>upto </span>
-                      <span className={styles["price"]}> £147</span>
+                      <span className={styles["price"]}> £{value.discountPrice}</span>
                     </p>
                   </div>
                 </div>

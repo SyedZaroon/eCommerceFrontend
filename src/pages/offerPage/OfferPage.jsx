@@ -2,12 +2,6 @@ import React from "react";
 import styles from "./offerPage.module.css";
 import { NavLink, useParams } from "react-router-dom";
 import ArrowDown from "../../assets/icons/ArrowDown";
-import {
-  iphoneSubmenu,
-  samsungSubmenu,
-  pixelSubmenu,
-  mainMenu,
-} from "../../data/subMenu/menuData.js";
 import Error from "../errorPage/Error";
 import VariantPicker from "../../components/variantPicker/VariantPicker.jsx";
 import Label from "@/components/labels/Label"
@@ -15,9 +9,6 @@ import buyerImg from '../../assets/images/urphone.png'
 import Button from "../../components/button/Button.jsx";
 import ProductOffer from "../../components/productOffer/ProductOffer.jsx";
 import clsx from "clsx";
-
-const menu = [...iphoneSubmenu, ...samsungSubmenu, ...pixelSubmenu]
-const brandMenu = [...mainMenu]
 
 
 const OfferPage = () => {

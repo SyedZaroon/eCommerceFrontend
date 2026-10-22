@@ -10,7 +10,8 @@
 
 
 .popular-box{
-    width: fit-content;
+    width: 200px;
+    height: 200px;
 }
 
 .popular-component{
