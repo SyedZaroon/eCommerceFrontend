@@ -6,9 +6,9 @@ import { NavLink } from "react-router-dom";
 import ArrowDown from "../../assets/icons/ArrowDown";
 import SubMenu from "../subMenu/SubMenu";
 import { CloseCircle } from "iconsax-reactjs";
+import { formatString } from "../../utils/formatString";
 
-
-const Sidebar = ({ view = false, onClose }) => {
+const Sidebar = ({ view = false, onClose, menu }) => {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
 
   const mousePosition = (e) => {
@@ -26,36 +26,6 @@ const Sidebar = ({ view = false, onClose }) => {
       document.body.style.overflow = "auto";
     };
   }, [view]);
-    
-    const initialState = {
-      iphone: false,
-      samsung: false,
-      pixel: false,
-    };
-  
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case "TOGGLE":
-        return {
-          ...state,
-          [action.payload]: !state[action.payload],
-        };
-      case "OPEN_ONLY":
-        return {
-          iphone: false,
-          samsung: false,
-          pixel: false,
-          [action.payload]: !state[action.payload],
-        };
-      case "RESET":
-        return initialState;
-      default:
-        return state;
-    }
-  };
-
-  const [subMenu, dispatch] = useReducer(reducer, initialState);
-
 
   return (
     <>
@@ -94,68 +64,17 @@ const Sidebar = ({ view = false, onClose }) => {
         </div>
 
         <div className={styles["sidebar-menu"]}>
-          <p
-            className={clsx(
-              styles["menu-item"],
-              subMenu.iphone ? styles["menuopen"] : styles["menuclose"]
-            )}
-            onClick={() => dispatch({ type: "OPEN_ONLY", payload: "iphone" })}
-          >
-            <span className={styles["iphone"]}>iPhone</span>
-            <span className={styles.arrow}>
-              <ArrowDown pathClass={styles["arrow-path"]} />
-            </span>
-          </p>
-          <div
-            className={clsx(
-              styles["submenu"],
-              subMenu.iphone ? styles["submenu-open"] : styles["submenu-close"],
-              styles["scrollbar"]
-            )}
-          >
-          </div>
-          <p
-            className={clsx(
-              styles["menu-item"],
-              subMenu.samsung ? styles["menuopen"] : styles["menuclose"]
-            )}
-            onClick={() => dispatch({ type: "OPEN_ONLY", payload: "samsung" })}
-          >
-            <span>Samsung Phones</span>
-            <span className={styles.arrow}>
-              <ArrowDown pathClass={styles["arrow-path"]} />
-            </span>
-          </p>
-          <div
-            className={clsx(
-              styles["submenu"],
-              subMenu.samsung
-                ? styles["submenu-open"]
-                : styles["submenu-close"],
-              styles["scrollbar"]
-            )}
-          >
-          </div>
-          <p
-            className={clsx(
-              styles["menu-item"],
-              subMenu.pixel ? styles["menuopen"] : styles["menuclose"]
-            )}
-            onClick={() => dispatch({ type: "OPEN_ONLY", payload: "pixel" })}
-          >
-            <span>Google Pixels</span>
-            <span className={styles.arrow}>
-              <ArrowDown pathClass={styles["arrow-path"]} />
-            </span>
-          </p>
-          <div
-            className={clsx(
-              styles["submenu"],
-              subMenu.pixel ? styles["submenu-open"] : styles["submenu-close"],
-              styles["scrollbar"]
-            )}
-          >
-          </div>
+          {menu.map((value) => {
+            return (
+              <NavLink
+                to={`/collection/${value.slug}`}
+                key={value._id}
+                className={styles["iphone"]}
+              >
+                {formatString(value.slug)}
+              </NavLink>
+            );
+          })}
         </div>
       </div>
     </>

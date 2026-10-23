@@ -11,3 +11,14 @@ export const getAllProducts = async (page = 1, limit = 10) => {
     throw error;
   }
 };
+
+export const getSingleProduct = async(slug) =>{
+  try{
+    const res = await api.get(`/products/${slug}`)
+    return res
+  }
+  catch(error){
+    console.log(error)
+    throw error
+  }
+}

@@ -1,74 +1,81 @@
-.popular-width{
-    margin: clamp(32px, 2vw + 32px, 72px) 32px;
-    
+.popular-width {
+  margin: clamp(32px, 2vw + 32px, 72px) 32px;
+  min-width: 0;
 }
 
-.popular-heading{
-    font-weight: var(--fontw-bold);
-    font-size: var(--fs-h-3);
+.popular-heading {
+  font-weight: var(--fontw-bold);
+  font-size: var(--fs-h-3);
 }
 
-
-.popular-box{
-    width: 200px;
-    height: 200px;
+.popular-box {
+  width: 100%;
+  height: auto;
+  position: relative;
 }
 
-.popular-component{
-    margin-top: clamp(24px,1vw + 16px,32px);
+.popular-component {
+  margin-top: clamp(24px, 1vw + 16px, 32px);
+  width: 100%;
 }
 
-.popular-image{
-    padding: 24px 36px;
-    border-radius: var(--radius-xl);
-    background-color: var(--color-gray-50);
-
-    position: relative;
+.popular-image {
+  display: block;
+  width: 100%;
+  height: 200px;
+  padding: 24px 36px;
+  box-sizing: border-box;
+  border-radius: var(--radius-xl);
+  background-color: var(--color-gray-50);
+  object-fit: contain;
 }
 
-.popualr-label{
-    position: absolute;
-    top: 12px;
-    left: 12px;
+.popualr-label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
 }
 
-.popular-content{
-    display: flex;
-    align-items: center;
-    flex-direction: column;
+.popular-content {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
 }
 
-.popular-title{
-    font-size: var(--fs-body-3);
-    color: var(--color-gray-600);
+.popular-title {
+  font-size: var(--fs-body-3);
+  color: var(--color-gray-600);
 }
 
-.popular-price{
-    font-family: var(--font-futuru);
-    color: var(--color-gray-400);
-    font-size: var(--fs-body-2);
-
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.price{
-    font-size: var(--fs-body-1);
-    font-weight: var(--fontw-bold);
-    color: var(--color-black);
+.popular-price {
+  font-family: var(--font-futuru);
+  color: var(--color-gray-400);
+  font-size: var(--fs-body-2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.prev-btn{
-    position: absolute;
-    top: 50% ;
-    transform: translatey(-100%);
-    z-index: 1;
+.price {
+  font-size: var(--fs-body-1);
+  font-weight: var(--fontw-bold);
+  color: var(--color-black);
+}
+
+.prev-btn {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 10;
 }
 
 .next-btn {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translatey(-100%);
-    z-index: 1;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 10;
 }

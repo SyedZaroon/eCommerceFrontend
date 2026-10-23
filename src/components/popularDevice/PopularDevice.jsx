@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import styles from './popularDevice.module.css'
-import iphone from '../../assets/images/iphone.png'
 import Label from '../labels/Label'
 
 
@@ -17,14 +16,11 @@ import IconButton from '../iconButton/Iconbutton';
 
 
 const PopularDevice = () => {
-    const a = [1, 2, 3, 4, 5, 6, 7,8,9,10];
-
     const [popularProducts, setPopularProducts] = useState([]);
 
     useEffect(()=>{
       const fetchprducts = async ()=>{
         const data = await getAllProducts();
-        console.log(data);
         setPopularProducts(data.products)
       }
 
@@ -41,7 +37,7 @@ const PopularDevice = () => {
           nextEl: ".custom-swiper-button-next",
           prevEl: ".custom-swiper-button-prev",
         }}
-        autoplay={{ delay: 3000 }}
+        // autoplay={{ delay: 3000 }}
         className={styles["popular-component"]}
         breakpoints={{
           320: { slidesPerView: 1.1 },

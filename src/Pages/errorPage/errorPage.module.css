@@ -1,0 +1,59 @@
+.error-page {
+    display: grid;
+    min-height: 560px;
+    place-items: center;
+    padding: 64px 24px 96px;
+}
+
+.error-content {
+    width: min(100%, 640px);
+    text-align: center;
+}
+
+.error-code {
+    color: var(--color-accent-700);
+    font-family: var(--font-futuru);
+    font-size: clamp(112px, 24vw, 200px);
+    font-weight: var(--fontw-extra-bold);
+    letter-spacing: -0.08em;
+    line-height: 0.9;
+}
+
+.error-eyebrow {
+    margin-top: 28px;
+    color: var(--color-gray-600);
+    font-size: var(--fs-body-3);
+    font-weight: var(--fontw-semi-bold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.error-title {
+    margin-top: 8px;
+    font-size: var(--fs-h-2);
+    line-height: 1.15;
+}
+
+.error-description {
+    max-width: 480px;
+    margin: 16px auto 0;
+    color: var(--color-gray-600);
+    font-size: var(--fs-body-2);
+}
+
+.home-link {
+    display: inline-flex;
+    margin-top: 32px;
+    text-decoration: none;
+}
+
+@media screen and (max-width: 600px) {
+    .error-page {
+        min-height: 440px;
+        padding: 48px 24px 72px;
+    }
+
+    .error-eyebrow {
+        margin-top: 20px;
+    }
+}

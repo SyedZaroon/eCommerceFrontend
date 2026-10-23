@@ -3,9 +3,7 @@ import styles from "./header.module.css";
 import { NavLink } from "react-router-dom";
 import logo from "@/assets/images/PriceFirst.png";
 import blacklogo from "@/assets/images/blacklogo.png";
-import ArrowDown from "../../assets/icons/ArrowDown";
 import { HamburgerMenu } from "iconsax-reactjs";
-import SubMenu from "../subMenu/SubMenu";
 import clsx from "clsx";
 import Sidebar from "../sideBar/Sidebar";
 import Inputfield from "../inputFields/InputFields.jsx";
@@ -25,10 +23,9 @@ const Header = ({ variant = "header1" }) => {
     collectionlist();
   }, []);
 
-  console.log("collection list", menu);
   return (
     <>
-      <Sidebar view={sideBar} onClose={() => setSideBar(false)} />
+      <Sidebar menu={menu} view={sideBar} onClose={() => setSideBar(false)} />
       <div className={clsx(styles["header"], styles[`${variant}`])}>
         <div className={styles["header-left"]}>
           {variant !== "header3" ? (
