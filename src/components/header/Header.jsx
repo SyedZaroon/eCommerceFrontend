@@ -71,6 +71,12 @@ const Header = ({ variant = "header1" }) => {
                 {formatString(value.slug)}
               </NavLink>
             ))}
+                          <NavLink
+                to={`/collection/all`}
+                className={styles["menu-link"]}
+              >
+                All Products
+              </NavLink>
           </nav>
         )}
 
