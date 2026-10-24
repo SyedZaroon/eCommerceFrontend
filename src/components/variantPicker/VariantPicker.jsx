@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../button/Button.jsx";
 import styles from "./variantPicker.module.css";
+import { useCart } from "../../hook/useCart.jsx";
 
 const currencyFormatter = new Intl.NumberFormat("en-GB", {
   style: "currency",
@@ -17,6 +18,8 @@ const VariantPicker = ({ product }) => {
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState("1");
   const [showQuantityError, setShowQuantityError] = useState(false);
+    const { addToCart } = useCart();
+  const [cartError, setCartError] = useState("");
 
   useEffect(() => {
     setQuantity("1");
@@ -27,15 +30,8 @@ const VariantPicker = ({ product }) => {
     return <p className={styles.loading}>Loading product...</p>;
   }
 
-  const {
-    productImg,
-    image,
-    sku,
-    title,
-    discountPrice,
-    basePrice,
-    stock,
-  } = product;
+  const { productImg, image, sku, title, discountPrice, basePrice, stock } =
+    product;
   const imageSrc = productImg || image;
   const quantityValue = Number(quantity);
   const stockValue = Number(stock);
@@ -46,8 +42,7 @@ const VariantPicker = ({ product }) => {
     Number.isInteger(stockValue) &&
     stockValue >= 0;
   const isInStock = hasValidStock && stockValue > 0;
-  const isQuantityValid =
-    Number.isInteger(quantityValue) && quantityValue >= 1;
+  const isQuantityValid = Number.isInteger(quantityValue) && quantityValue >= 1;
   const exceedsStock =
     isQuantityValid && hasValidStock && quantityValue > stockValue;
   const unitPrice = Number(discountPrice);
@@ -95,6 +90,22 @@ const VariantPicker = ({ product }) => {
     navigate("/checkout", { state: { product, quantity: quantityValue } });
   };
 
+
+  const handleAddToCart = () => {
+    setCartError("");
+
+    if (!isInStock || !isQuantityValid || exceedsStock || !subtotal) {
+      setShowQuantityError(true);
+      return;
+    }
+
+    const added = addToCart(product, quantityValue);
+
+    if (!added) {
+      setCartError("Unable to add this product to your cart.");
+    }
+  };
+
   return (
     <section className={styles["product-card"]} aria-label="Product details">
       <div className={styles["image-box"]}>
@@ -124,15 +135,16 @@ const VariantPicker = ({ product }) => {
             <span className={styles["discount-price"]}>Price unavailable</span>
           )}
           {showBasePrice && (
-            <del className={styles["base-price"]}>
-              {formatPrice(basePrice)}
-            </del>
+            <del className={styles["base-price"]}>{formatPrice(basePrice)}</del>
           )}
           <span className={styles["price-caption"]}>per item</span>
         </div>
 
         <div className={styles["quantity-section"]}>
-          <label className={styles["quantity-label"]} htmlFor="product-quantity">
+          <label
+            className={styles["quantity-label"]}
+            htmlFor="product-quantity"
+          >
             Quantity
           </label>
           <div className={styles["quantity-control"]}>
@@ -167,21 +179,19 @@ const VariantPicker = ({ product }) => {
               type="button"
               className={styles["quantity-button"]}
               onClick={() => adjustQuantity(1)}
-              disabled={
-                hasValidStock && quantityValue >= stockValue
-              }
+              disabled={hasValidStock && quantityValue >= stockValue}
               aria-label="Increase quantity"
             >
               +
             </button>
           </div>
           {isInStock ? (
-            <p className={styles["stock-status"]}>
-              {stockValue} in stock
-            </p>
+            <p className={styles["stock-status"]}>{stockValue} in stock</p>
           ) : (
             <p className={styles["stock-error"]}>
-              {hasValidStock ? "Out of stock." : "Stock availability unavailable."}
+              {hasValidStock
+                ? "Out of stock."
+                : "Stock availability unavailable."}
             </p>
           )}
           {showQuantityError && quantityError && (
@@ -197,26 +207,30 @@ const VariantPicker = ({ product }) => {
         </div>
 
         <div>
-        <Button
-          className={styles["buy-now-button"]}
-          size="md"
-          variant="primary"
-          type="button"
-          disabled={!isInStock || !isQuantityValid || exceedsStock || !subtotal}
-          onClick={handleBuyNow}
-        >
-          {buyNowLabel}
-        </Button>
-        <Button
-          className={styles["buy-now-button"]}
-          size="md"
-          variant="primary"
-          type="button"
-          disabled={!isInStock || !isQuantityValid || exceedsStock || !subtotal}
-          onClick={handleBuyNow}
-        >
-          Add to Cart
-        </Button>
+          <Button
+            className={styles["buy-now-button"]}
+            size="md"
+            variant="primary"
+            type="button"
+            disabled={
+              !isInStock || !isQuantityValid || exceedsStock || !subtotal
+            }
+            onClick={handleBuyNow}
+          >
+            {buyNowLabel}
+          </Button>
+          <Button
+            className={styles["buy-now-button"]}
+            size="md"
+            variant="primary"
+            type="button"
+            disabled={
+              !isInStock || !isQuantityValid || exceedsStock || !subtotal
+            }
+            onClick={handleAddToCart}
+          >
+            Add to Cart
+          </Button>
         </div>
       </div>
     </section>

@@ -2,6 +2,7 @@ import React from "react";
 import Header from "./header/Header";
 import { Outlet, useLocation } from "react-router-dom";
 import Footer from "./footer/Footer";
+import CartDrawer from "./cartDrawer/cartDrawer";
 
 const Layout = () => {
   const location = useLocation();
@@ -13,7 +14,6 @@ const Layout = () => {
     headerVariant = "header1";
   } else if (
     path.startsWith("/checkout") ||
-    path.startsWith("/cart") ||
     path.startsWith("/thankyou")
   ) {
     headerVariant = "header3";
@@ -23,6 +23,7 @@ const Layout = () => {
     <div className="border">
       <Header variant={headerVariant} />
       <Outlet />
+      <CartDrawer />
       <Footer />
     </div>
   );

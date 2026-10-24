@@ -13,6 +13,7 @@ import Error from "./pages/errorPage/Error";
 import AboutPage from "./pages/aboutPage/AboutPage";
 import ThankYouPage from "./pages/thankYouPage/ThankYouPage";
 import Checkout from './pages/checkout/Checkout'
+import CartDrawer from "./components/cartDrawer/cartDrawer";
 
 const router = createBrowserRouter([
   {
