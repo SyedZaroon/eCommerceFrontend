@@ -83,9 +83,6 @@ const ProductSearch = ({
 
   return (
     <div className={styles[mode === "inline" ? "inlineSearch" : "drawerSearch"]}>
-      <label className={styles.searchLabel} htmlFor={inputId}>
-        Search devices
-      </label>
       <div className={styles.searchField}>
         <SearchIcon />
         <input

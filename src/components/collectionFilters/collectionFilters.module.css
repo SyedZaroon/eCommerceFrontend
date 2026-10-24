@@ -1,0 +1,210 @@
+.filters {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  padding: 22px 20px;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  background: var(--color-white);
+}
+
+.filtersHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.filtersHeader h2 {
+  margin: 0;
+  color: var(--color-gray-900);
+  font-size: var(--fs-body-1);
+  font-weight: var(--fontw-semi-bold);
+}
+
+.clearButton {
+  padding: 4px 0;
+  border: 0;
+  color: var(--color-gray-600);
+  background: transparent;
+  font-size: var(--fs-body-4);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.clearButton:hover {
+  color: var(--color-gray-1000);
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 20px 0;
+  border: 0;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.filterGroup:last-child {
+  padding-bottom: 4px;
+  border-bottom: 0;
+}
+
+.filterGroup legend {
+  margin-bottom: 16px;
+  padding: 0;
+  color: var(--color-gray-900);
+  font-size: var(--fs-body-3);
+  font-weight: var(--fontw-semi-bold);
+}
+
+.filterOption {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-gray-600);
+  font-size: var(--fs-body-3);
+  cursor: pointer;
+}
+
+.filterOption input[type="checkbox"] {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  order: -1;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-xs);
+  background: var(--color-white);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.filterOption input:checked + span + .checkmark {
+  border-color: var(--color-black);
+  background: var(--color-black);
+}
+
+.filterOption input:checked + span + .checkmark::after {
+  width: 8px;
+  height: 5px;
+  border-bottom: 2px solid var(--color-accent-700);
+  border-left: 2px solid var(--color-accent-700);
+  content: "";
+  transform: translateY(-1px) rotate(-45deg);
+}
+
+.filterOption input:focus-visible + span + .checkmark {
+  outline: 3px solid rgb(255 193 7 / 45%);
+  outline-offset: 2px;
+}
+
+.filterOption:has(input:checked) {
+  color: var(--color-gray-900);
+  font-weight: var(--fontw-medium);
+}
+
+.priceInputs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+  gap: 8px;
+}
+
+.priceInput {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: var(--color-gray-500);
+  font-size: var(--fs-body-4);
+}
+
+.priceField {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0 9px;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  color: var(--color-gray-600);
+  background: var(--color-gray-50);
+}
+
+.priceField:focus-within {
+  border-color: var(--color-accent-800);
+  box-shadow: 0 0 0 3px rgb(255 193 7 / 20%);
+}
+
+.priceField input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  color: var(--color-gray-900);
+  background: transparent;
+  font: inherit;
+  font-size: var(--fs-body-4);
+}
+
+.priceField input::-webkit-inner-spin-button,
+.priceField input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.priceField input[type="number"] {
+  appearance: textfield;
+}
+
+.priceSeparator {
+  padding-bottom: 12px;
+  color: var(--color-gray-400);
+}
+
+.priceHint {
+  margin: 12px 0 0;
+  color: var(--color-gray-500);
+  font-size: var(--fs-body-4);
+  line-height: 1.5;
+}
+
+.clearButton:focus-visible {
+  outline: 2px solid var(--color-accent-700);
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .filters {
+    position: static;
+    padding: 16px;
+  }
+
+  .filterGroup {
+    padding: 16px 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkmark,
+  .priceField {
+    transition: none;
+  }
+}
