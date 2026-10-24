@@ -31,7 +31,6 @@ const Header = ({ variant = "header1" }) => {
     <>
       <Sidebar menu={menu} view={sideBar} onClose={() => setSideBar(false)} />
       <SearchDrawer
-        menu={menu}
         isOpen={searchOpen}
         onClose={() => setSearchOpen(false)}
       />

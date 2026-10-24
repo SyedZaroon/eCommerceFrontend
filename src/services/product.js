@@ -7,18 +7,33 @@ export const getAllProducts = async (page = 1, limit = 10) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching products:", error.response?.data || error.message);
+    console.error(
+      "Error fetching products:",
+      error.response?.data || error.message,
+    );
     throw error;
   }
 };
 
-export const getSingleProduct = async(slug) =>{
-  try{
-    const res = await api.get(`/products/${slug}`)
-    return res
+export const getSingleProduct = async (slug) => {
+  try {
+    const res = await api.get(`/products/${slug}`);
+    return res;
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
-  catch(error){
-    console.log(error)
-    throw error
+};
+
+export const searchProduct = async (search) => {
+  try {
+    const data = await api.get("/products", { params: { search } });
+    return data.data;
+  } catch (error) {
+    console.error(
+      "Error fetching products:",
+      error.data?.data || error.message,
+    );
+    throw error;
   }
-}
+};

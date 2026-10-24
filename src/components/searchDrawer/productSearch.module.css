@@ -1,0 +1,227 @@
+.drawerSearch,
+.inlineSearch {
+  position: relative;
+  width: 100%;
+}
+
+.searchLabel {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-gray-700);
+  font-size: var(--fs-body-3);
+  font-weight: var(--fontw-semi-bold);
+}
+
+.searchField {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 54px;
+  padding: 0 16px;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-full);
+  background: var(--color-gray-50);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.searchField:focus-within {
+  border-color: var(--color-accent-800);
+  box-shadow: 0 0 0 3px rgb(255 193 7 / 22%);
+}
+
+.searchField > :global(svg) {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  filter: none !important;
+}
+
+.searchField input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  padding: 12px 0;
+  border: 0;
+  outline: 0;
+  color: var(--color-gray-900);
+  background: transparent;
+  font: inherit;
+  font-size: var(--fs-body-3);
+}
+
+.searchField input::placeholder {
+  color: var(--color-gray-400);
+}
+
+.clearButton {
+  padding: 6px 0 6px 8px;
+  border: 0;
+  color: var(--color-gray-600);
+  background: transparent;
+  font-size: var(--fs-body-4);
+  font-weight: var(--fontw-medium);
+  cursor: pointer;
+}
+
+.clearButton:hover {
+  color: var(--color-gray-900);
+}
+
+.resultsPanel {
+  margin-top: 24px;
+}
+
+.resultsHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.resultsHeader h3 {
+  margin: 0;
+  color: var(--color-gray-900);
+  font-size: var(--fs-body-3);
+  font-weight: var(--fontw-semi-bold);
+}
+
+.resultsHeader > span {
+  color: var(--color-gray-500);
+  font-size: var(--fs-body-4);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+}
+
+.productResult {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 80px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  color: var(--color-gray-900);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.productResult:hover {
+  background: var(--color-accent-200);
+}
+
+.productImage {
+  display: grid;
+  flex: 0 0 56px;
+  width: 56px;
+  height: 60px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  color: var(--color-gray-500);
+  background: var(--color-gray-100);
+  font-size: 10px;
+}
+
+.productImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.productInfo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.productTitle {
+  overflow: hidden;
+  font-size: var(--fs-body-3);
+  font-weight: var(--fontw-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.productPrice {
+  color: var(--color-gray-600);
+  font-size: var(--fs-body-4);
+}
+
+.resultArrow {
+  color: var(--color-gray-500);
+  font-size: 20px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.productResult:hover .resultArrow {
+  color: var(--color-gray-900);
+  transform: translateX(3px);
+}
+
+.message {
+  margin: 0;
+  padding: 24px 16px;
+  border-radius: var(--radius-lg);
+  color: var(--color-gray-600);
+  background: var(--color-gray-50);
+  font-size: var(--fs-body-3);
+  text-align: center;
+}
+
+.clearButton:focus-visible,
+.productResult:focus-visible {
+  outline: 3px solid var(--color-accent-700);
+  outline-offset: 3px;
+}
+
+.inlineSearch .searchLabel {
+  color: var(--color-gray-800);
+}
+
+.inlineSearch .searchField {
+  border-color: var(--color-accent-900);
+  background: var(--color-white);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 6%);
+}
+
+.inlineSearch .resultsPanel {
+  position: absolute;
+  z-index: 5;
+  top: 100%;
+  right: 0;
+  left: 0;
+  max-height: 380px;
+  overflow-y: auto;
+  margin-top: 8px;
+  padding: 14px;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  background: var(--color-white);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 16%);
+}
+
+.inlineSearch .resultsHeader {
+  margin-top: 0;
+}
+
+@media (max-width: 480px) {
+  .inlineSearch .resultsPanel {
+    padding: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .searchField,
+  .clearButton,
+  .productResult,
+  .resultArrow {
+    transition: none;
+  }
+}

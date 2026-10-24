@@ -36,9 +36,10 @@
     width: 370px;
 }
 
-.search-field {
-    border-radius: var(--radius-2xl);
-    border-color: var(--color-accent-900);
+.banner-newsletter {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 420px);
 }
 
 .banner-box {
