@@ -6,6 +6,7 @@ import blacklogo from "@/assets/images/blacklogo.png";
 import { HamburgerMenu } from "iconsax-reactjs";
 import clsx from "clsx";
 import Sidebar from "../sideBar/Sidebar";
+import SearchDrawer from "../searchDrawer/SearchDrawer";
 import SearchIcon from "../../assets/icons/SearchIcon.jsx";
 import { getAllCollections } from "../../services/productCollection.js";
 import { formatString } from "../../utils/formatString.js";
@@ -14,6 +15,7 @@ import { useCart } from "../../hook/useCart.jsx";
 
 const Header = ({ variant = "header1" }) => {
   const [sideBar, setSideBar] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [menu, setMenu] = useState([]);
   const { openCart, totalQuantity } = useCart();
 
@@ -28,6 +30,11 @@ const Header = ({ variant = "header1" }) => {
   return (
     <>
       <Sidebar menu={menu} view={sideBar} onClose={() => setSideBar(false)} />
+      <SearchDrawer
+        menu={menu}
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
       <div className={clsx(styles["header"], styles[`${variant}`])}>
         <div className={styles["header-left"]}>
           {variant !== "header3" && (
@@ -74,14 +81,15 @@ const Header = ({ variant = "header1" }) => {
             role="group"
             aria-label="Header actions"
           >
-            <span
+            <button
+              type="button"
               className={styles["icon-button"]}
-              role="img"
               aria-label="Search"
               title="Search"
+              onClick={() => setSearchOpen(true)}
             >
               <SearchIcon />
-            </span>
+            </button>
             <button
               type="button"
               className={clsx(styles["icon-button"], styles["cart-button"])}
