@@ -13,7 +13,6 @@ import Error from "./pages/errorPage/Error";
 import AboutPage from "./pages/aboutPage/AboutPage";
 import ThankYouPage from "./pages/thankYouPage/ThankYouPage";
 import Checkout from './pages/checkout/Checkout'
-import CartDrawer from "./components/cartDrawer/cartDrawer";
 import CollectionPage from "./Pages/collectionPage/CollectionPage";
 
 const router = createBrowserRouter([
@@ -28,7 +27,7 @@ const router = createBrowserRouter([
             {
         path: "/collection/:collectionName",
         element: <CollectionPage />,
-      },
+      }, 
       {
         path: "/product/:model",
         element: <OfferPage />,

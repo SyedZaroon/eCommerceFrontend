@@ -165,15 +165,6 @@
   transform: translateY(-3px);
 }
 
-.productImageWrap {
-  position: relative;
-  display: grid;
-  height: 200px;
-  place-items: center;
-  padding: 24px;
-  background: var(--color-gray-50);
-}
-
 .productBadge {
   position: absolute;
   top: 14px;
@@ -251,7 +242,6 @@
 }
 
 .productInfo h2 {
-  min-height: 44px;
   margin: 0;
   color: var(--color-gray-900);
   font-size: var(--fs-body-3);

@@ -1,9 +1,15 @@
 import api from "./api";
 
-export const getAllProducts = async (page = 1, limit = 10) => {
+export const getAllProducts = async (
+  page = 1,
+  limit = 10,
+  collection = "",
+  sort = "newest",
+  filters = {},
+) => {
   try {
     const response = await api.get("/products", {
-      params: { page, limit },
+      params: { page, limit, collection, sort, ...filters },
     });
     return response.data;
   } catch (error) {

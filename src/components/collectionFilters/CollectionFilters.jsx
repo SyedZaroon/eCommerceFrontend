@@ -14,6 +14,7 @@ const CollectionFilters = (props) => {
     onMaximumPriceChange,
     onInStockChange,
     onClear,
+    errorMessage = "",
   } = props;
   const [minimumDraft, setMinimumDraft] = useState(String(minimumPrice));
   const [maximumDraft, setMaximumDraft] = useState(String(maximumPrice));
@@ -55,7 +56,7 @@ const CollectionFilters = (props) => {
               <input
                 type="number"
                 min="0"
-                max={maximumPrice}
+                max={maximumPrice || undefined}
                 step="10"
                 value={minimumDraft}
                 onChange={(event) => setMinimumDraft(event.target.value)}
@@ -76,8 +77,8 @@ const CollectionFilters = (props) => {
               <span aria-hidden="true">£</span>
               <input
                 type="number"
-                min={minimumPrice}
-                max={priceLimit}
+                min={minimumPrice || 0}
+                max={Number.isFinite(priceLimit) ? priceLimit : undefined}
                 step="10"
                 value={maximumDraft}
                 onChange={(event) => setMaximumDraft(event.target.value)}
@@ -90,25 +91,34 @@ const CollectionFilters = (props) => {
             </span>
           </label>
         </div>
-        <p className={styles.priceHint}>
-          Set a range from £0 to £{priceLimit.toLocaleString("en-GB")}.
-        </p>
+        {Number.isFinite(priceLimit) && (
+          <p className={styles.priceHint}>
+            Set a range from £0 to £{priceLimit.toLocaleString("en-GB")}.
+          </p>
+        )}
       </fieldset>
 
-      <fieldset className={styles.filterGroup}>
-        <legend>Collection</legend>
-        {collections.map((collection) => (
-          <label className={styles.filterOption} key={collection}>
-            <input
-              type="checkbox"
-              checked={selectedCollections.includes(collection)}
-              onChange={() => onCollectionChange(collection)}
-            />
-            <span>{collection}</span>
-            <span className={styles.checkmark} aria-hidden="true" />
-          </label>
-        ))}
-      </fieldset>
+      {collections.length > 0 && (
+        <fieldset className={styles.filterGroup}>
+          <legend>Collection</legend>
+          {collections.map((collection) => (
+            <label className={styles.filterOption} key={collection}>
+              <input
+                type="checkbox"
+                checked={selectedCollections.includes(collection)}
+                onChange={() => onCollectionChange(collection)}
+              />
+              <span>{collection}</span>
+              <span className={styles.checkmark} aria-hidden="true" />
+            </label>
+          ))}
+        </fieldset>
+      )}
+      {errorMessage && (
+        <p className={styles.priceHint} role="alert">
+          {errorMessage}
+        </p>
+      )}
     </aside>
   );
 };
