@@ -10,7 +10,7 @@ import CollectionToolbar from "./components/CollectionToolbar";
 import ProductGrid from "./components/ProductGrid";
 import styles from "./collectionPage.module.css";
 
-const productsPerPage = 10;
+const productsPerPage = 8;
 const validSortOptions = [
   "newest",
   "oldest",
@@ -22,6 +22,7 @@ const validSortOptions = [
 
 const CollectionPage = () => {
   const { collectionName } = useParams();
+  const collectionSlug = collectionName === "all" ? "" : collectionName || "";
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -31,7 +32,7 @@ const CollectionPage = () => {
   const [filterError, setFilterError] = useState("");
   const [retryCount, setRetryCount] = useState(0);
 
-  const collectionTitle = formatString(collectionName || "");
+  const collectionTitle = collectionName === 'all' ? "All Products" : formatString(collectionName || "");
   const sortParam = searchParams.get("sort");
   const sort = validSortOptions.includes(sortParam) ? sortParam : "newest";
   const pageParam = Number(searchParams.get("page"));
@@ -57,7 +58,7 @@ const CollectionPage = () => {
         const data = await getAllProducts(
           currentPage,
           productsPerPage,
-          collectionName || "",
+          collectionSlug || "",
           sort,
           filters,
         );
@@ -94,7 +95,7 @@ const CollectionPage = () => {
       active = false;
     };
   }, [
-    collectionName,
+    collectionSlug,
     currentPage,
     sort,
     minimumPrice,

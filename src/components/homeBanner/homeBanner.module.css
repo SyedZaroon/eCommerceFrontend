@@ -67,6 +67,7 @@
     .home-banner-content {
         padding: 0px 24px 40px;
         order: 2;
+        align-items: center;
     }
 
     .home-banner {

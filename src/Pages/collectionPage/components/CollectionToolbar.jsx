@@ -4,7 +4,7 @@ import styles from "../collectionPage.module.css";
 const CollectionToolbar = ({ currentCount, totalCount, sort, onSortChange }) => (
   <div className={styles.toolbar}>
     <p className={styles.resultCount}>
-      Showing {currentCount} of {totalCount} devices
+      {totalCount} Products Found
     </p>
 
     <label className={styles.sortControl}>
