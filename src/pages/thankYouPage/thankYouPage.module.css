@@ -87,6 +87,27 @@
     margin-top: 20px;
 }
 
+.orderInformation {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 24px;
+    margin-top: 20px;
+    padding: 20px 24px;
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+}
+
+.orderInformation dt {
+    color: var(--color-gray-500);
+    font-size: var(--fs-body-3);
+}
+
+.orderInformation dd {
+    margin-top: 4px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
 .orderConfirmation {
     margin-top: 32px;
 }
@@ -127,6 +148,11 @@
     .sectionHeading {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .orderInformation {
+        grid-template-columns: 1fr;
+        padding: 16px;
     }
 
     .orderConfirmation {

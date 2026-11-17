@@ -12,7 +12,7 @@ import { createOrder } from "../../services/order";
 
 const CheckoutForm = () => {
   const navigate = useNavigate();
-  const { cartItems, clearCart } = useCart();
+  const { cartItems } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
@@ -71,7 +71,7 @@ const CheckoutForm = () => {
         paymentMethod: checkoutForm.paymentMethod,
       });
 
-      if (!result.success || !result.order) {
+      if (!result.success || !result.order?._id) {
         throw new Error(result.message || "Unable to create your order.");
       }
 
@@ -85,16 +85,18 @@ const CheckoutForm = () => {
           }))
         : submittedItems;
 
-      navigate("/thankyou", {
-        replace: true,
-        state: {
+        const confirmationState = {
           orderItems,
+          order: result.order,
           orderId: result.order._id,
           totalPrice: result.order.totalPrice,
           currency: result.order.currency,
-        },
+        };
+
+      navigate("/thankyou", {
+        replace: true,
+          state: confirmationState,
       });
-      clearCart();
     } catch (error) {
       setSubmitError(
         error.response?.data?.message ||

@@ -1,22 +1,23 @@
 import React from 'react'
 import styles from './orderDetails.module.css'
-import sellingimg from '@/assets/images/urphone.png'
-import trustpilotlogo from "@/assets/images/trustpilotlogo.png";
 import clsx from 'clsx';
 import { useCart } from '../../hook/useCart';
 
-const currencyFormatter = new Intl.NumberFormat("en-GB", {
-  style: "currency",
-  currency: "GBP",
-});
-
-const OrderDetails = ({ items }) => {
+const OrderDetails = ({ items, currency = "GBP", totalPrice }) => {
   const { cartItems } = useCart();
-  const orderItems = items ?? cartItems;
+  const orderItems = Array.isArray(items) ? items : cartItems;
+  const currencyFormatter = new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency,
+  });
   const subtotal = orderItems.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) =>
+      total + Number(item.price) * Number(item.quantity ?? item.qty),
     0
   );
+  const amountDue = Number.isFinite(Number(totalPrice))
+    ? Number(totalPrice)
+    : subtotal;
 
     const orderPrice = (
       <div
@@ -28,10 +29,10 @@ const OrderDetails = ({ items }) => {
                 )
         }
       >
-        <p className={styles["order-heading"]}>Offered Price</p>
+        <p className={styles["order-heading"]}>Order total</p>
 
         <div>
-          <p className={styles["order-price"]}>{currencyFormatter.format(subtotal)}</p>
+          <p className={styles["order-price"]}>{currencyFormatter.format(amountDue)}</p>
         </div>
       </div>
     );
@@ -48,7 +49,7 @@ const OrderDetails = ({ items }) => {
             {orderItems.map((item) => (
               <div
                 className={clsx(styles["device-img-box"], styles["grid-flex-row"])}
-                key={item._id}
+                key={item._id || item.product}
               >
                 {item.productImg && (
                   <img
@@ -59,7 +60,9 @@ const OrderDetails = ({ items }) => {
                 )}
                 <div className={clsx(styles["order-details"], styles["grid-flex"])}>
                   <p className={styles["order-title"]}>{item.title}</p>
-                  <p>{item.quantity} × {currencyFormatter.format(item.price)}</p>
+                  <p>
+                    {item.quantity ?? item.qty} × {currencyFormatter.format(Number(item.price))}
+                  </p>
                 </div>
               </div>
             ))}
