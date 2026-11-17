@@ -14,6 +14,7 @@ import AboutPage from "./pages/aboutPage/AboutPage";
 import ThankYouPage from "./pages/thankYouPage/ThankYouPage";
 import Checkout from './pages/checkout/Checkout'
 import CollectionPage from "./Pages/collectionPage/CollectionPage";
+import CartPage from "./Pages/cart/CartPage";
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
       {
         path: "/thankyou",
         element: <ThankYouPage />,
+      },
+      {
+        path: "/cart",
+        element: <CartPage />,
       },
       {
         path: "/checkout",

@@ -18,7 +18,7 @@ const VariantPicker = ({ product }) => {
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState("1");
   const [showQuantityError, setShowQuantityError] = useState(false);
-    const { addToCart } = useCart();
+    const { cartItems, addToCart, closeCart } = useCart();
   const [cartError, setCartError] = useState("");
 
   useEffect(() => {
@@ -87,7 +87,13 @@ const VariantPicker = ({ product }) => {
       return;
     }
 
-    navigate("/checkout", { state: { product, quantity: quantityValue } });
+    if (cartItems.length === 0 && !addToCart(product, quantityValue)) {
+      setCartError("Unable to add this product to your cart.");
+      return;
+    }
+
+    closeCart();
+    navigate("/checkout");
   };
 
 
@@ -207,6 +213,7 @@ const VariantPicker = ({ product }) => {
         </div>
 
         <div>
+          {cartError && <p className={styles["stock-error"]}>{cartError}</p>}
           <Button
             className={styles["buy-now-button"]}
             size="md"

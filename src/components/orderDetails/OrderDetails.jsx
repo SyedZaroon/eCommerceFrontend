@@ -1,13 +1,22 @@
 import React from 'react'
 import styles from './orderDetails.module.css'
-import orderimg from '@/assets/images/iphone.png'
 import sellingimg from '@/assets/images/urphone.png'
 import trustpilotlogo from "@/assets/images/trustpilotlogo.png";
-
 import clsx from 'clsx';
+import { useCart } from '../../hook/useCart';
 
+const currencyFormatter = new Intl.NumberFormat("en-GB", {
+  style: "currency",
+  currency: "GBP",
+});
 
-const OrderDetails = () => {
+const OrderDetails = ({ items }) => {
+  const { cartItems } = useCart();
+  const orderItems = items ?? cartItems;
+  const subtotal = orderItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
     const orderPrice = (
       <div
@@ -22,7 +31,7 @@ const OrderDetails = () => {
         <p className={styles["order-heading"]}>Offered Price</p>
 
         <div>
-          <p className={styles["order-price"]}>£2,220.00</p>
+          <p className={styles["order-price"]}>{currencyFormatter.format(subtotal)}</p>
         </div>
       </div>
     );
@@ -34,57 +43,33 @@ const OrderDetails = () => {
         <div
           className={(clsx(styles["device-details-box"]), styles["grid-flex"])}
         >
-          <p className={styles["order-heading"]}>Device Details</p>
-
-          <div
-            className={clsx(styles["device-img-box"], styles["grid-flex-row"])}
-          >
-            <img
-              className={styles["device-img"]}
-              src={orderimg}
-              height="148px"
-              width="118px"
-            />
-
-            <div className={clsx(styles["order-details"], styles["grid-flex"])}>
-              <p className={styles["order-title"]}>iPhone 16 Pro Max</p>
+          <p className={styles["order-heading"]}>Order Details</p>
+          <div className={styles["order-items"]}>
+            {orderItems.map((item) => (
               <div
-                className={clsx(styles["order-condition"], styles["grid-flex"])}
+                className={clsx(styles["device-img-box"], styles["grid-flex-row"])}
+                key={item._id}
               >
-                <p>
-                  Storage: <b>1TB</b>
-                </p>
-                <p>
-                  Condition: <b>Brand New</b>
-                </p>
-                <p>
-                  Network: <b>Vodafone</b>
-                </p>
+                {item.productImg && (
+                  <img
+                    className={styles["device-img"]}
+                    src={item.productImg}
+                    alt={item.title}
+                  />
+                )}
+                <div className={clsx(styles["order-details"], styles["grid-flex"])}>
+                  <p className={styles["order-title"]}>{item.title}</p>
+                  <p>{item.quantity} × {currencyFormatter.format(item.price)}</p>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
 
         <div
           className={clsx(styles["selling-details-box"], styles["grid-flex"])}
         >
-          <div className={clsx(styles["grid-flex"], styles["sellig"])}>
-            <p className={styles["order-heading"]}>Selling To</p>
 
-            <div
-              className={clsx(
-                styles["device-img-box"],
-                styles["grid-flex-row"]
-              )}
-            >
-              <img
-                className={styles["device-img"]}
-                src={sellingimg}
-                height="56px"
-                width="144px"
-              />
-            </div>
-          </div>
           <div className={styles["order-review-box"]}>
             <p className={clsx(styles["order-heading"])}>Reviews</p>
             <img

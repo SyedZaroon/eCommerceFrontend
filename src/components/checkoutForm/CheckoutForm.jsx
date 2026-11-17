@@ -7,9 +7,11 @@ import Button from "../button/Button";
 import Bank from "../../assets/icons/Bank";
 import Paypal from "../../assets/icons/Paypal";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../../hook/useCart";
 
 const CheckoutForm = () => {
   const navigate = useNavigate();
+  const { cartItems, clearCart } = useCart();
 
   const [checkoutForm, setCheckoutForm] = useState({
     firstName: "",
@@ -37,8 +39,8 @@ const CheckoutForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Data:", checkoutForm); 
-    navigate("/ThankYou");
+    navigate("/thankyou", { state: { orderItems: cartItems } });
+    clearCart();
   };
 
   return (

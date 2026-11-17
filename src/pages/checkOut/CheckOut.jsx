@@ -3,8 +3,16 @@ import styles from "./checkout.module.css";
 import CheckoutForm from "@/components/checkoutForm/CheckoutForm.jsx";
 import OrderDetails from "../../components/orderDetails/OrderDetails";
 import whyus from "../../data/whyUs";
+import { Navigate } from "react-router-dom";
+import { useCart } from "../../hook/useCart";
 
 const Checkout = () => {
+  const { cartItems } = useCart();
+
+  if (cartItems.length === 0) {
+    return <Navigate to="/cart" replace />;
+  }
+
   return (
     <div className={styles["checout-box"]}>
       

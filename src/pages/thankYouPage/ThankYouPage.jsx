@@ -3,9 +3,13 @@ import styles from './thankYouPage.module.css'
 import OrderDetails from '@/components/orderDetails/OrderDetails';
 import IconBox from "@/components/iconBox/IconBox";
 import OrderConfirmation from '../../components/orderConfirmation/OrderConfirmation';
+import { useLocation } from 'react-router-dom';
 
 
 const ThankYouPage = () => {
+  const location = useLocation();
+  const orderItems = location.state?.orderItems ?? [];
+
   return (
     <>
       <div className={styles["thankyou-box"]}>
@@ -14,7 +18,7 @@ const ThankYouPage = () => {
             Thank you for your order!
           </h1>
           <div className={styles["order-details"]} >
-            <OrderDetails />
+            <OrderDetails items={orderItems} />
           </div>
           <div className={styles["icon-box"]} >
             <IconBox

@@ -2,7 +2,6 @@
 import React, {
   createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
@@ -125,6 +124,10 @@ export const CartProvider = ({ children }) => {
     );
   }, []);
 
+  const clearCart = useCallback(() => {
+    setCartItems([]);
+  }, []);
+
   const closeCart = useCallback(() => {
     setIsCartOpen(false);
   }, []);
@@ -157,6 +160,7 @@ export const CartProvider = ({ children }) => {
       addToCart,
       updateQuantity,
       removeFromCart,
+      clearCart,
       closeCart,
       openCart,
     }),
@@ -168,6 +172,7 @@ export const CartProvider = ({ children }) => {
       addToCart,
       updateQuantity,
       removeFromCart,
+      clearCart,
       closeCart,
       openCart,
     ]
