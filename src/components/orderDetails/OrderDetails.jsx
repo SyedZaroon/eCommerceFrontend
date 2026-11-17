@@ -70,15 +70,6 @@ const OrderDetails = ({ items }) => {
           className={clsx(styles["selling-details-box"], styles["grid-flex"])}
         >
 
-          <div className={styles["order-review-box"]}>
-            <p className={clsx(styles["order-heading"])}>Reviews</p>
-            <img
-              className={styles["device-img"]}
-              src={trustpilotlogo}
-              height="56px"
-              width="144px"
-            />
-          </div>
 
           <div className={clsx(styles["price-wrapper"], styles.DesktopHide)}>
             {orderPrice}

@@ -41,6 +41,11 @@
     color: var(--color-gray-500);
 }
 
+.submit-error {
+    color: var(--color-danger-700, #b42318);
+    font-weight: 600;
+}
+
 @media screen and (max-width:620px) {
     .row-flex-field {
             flex-direction: column;

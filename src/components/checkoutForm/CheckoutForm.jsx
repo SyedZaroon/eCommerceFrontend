@@ -8,23 +8,24 @@ import Bank from "../../assets/icons/Bank";
 import Paypal from "../../assets/icons/Paypal";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../hook/useCart";
+import { createOrder } from "../../services/order";
 
 const CheckoutForm = () => {
   const navigate = useNavigate();
   const { cartItems, clearCart } = useCart();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const [checkoutForm, setCheckoutForm] = useState({
-    firstName: "",
-    Email: "",
+    fullName: "",
+    email: "",
     phoneNumber: "",
     postCode: "",
-    Address: "",
-    AdditionalInfo: "",
+    address: "",
+    additionalInfo: "",
     town: "",
     country: "",
-    payment: "",
-    sortCode: "",
-    AccountNumber: "",
+    paymentMethod: "COD",
     postage: "",
   });
 
@@ -37,10 +38,72 @@ const CheckoutForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/thankyou", { state: { orderItems: cartItems } });
-    clearCart();
+    setSubmitError("");
+    setIsSubmitting(true);
+    const submittedItems = cartItems.map((item) => ({
+      _id: item._id,
+      title: item.title,
+      quantity: item.quantity,
+      price: item.price,
+      productImg: item.productImg,
+    }));
+
+    try {
+      const result = await createOrder({
+        orderItems: submittedItems.map((item) => ({
+          product: item._id,
+          qty: item.quantity,
+        })),
+        userInfo: {
+          name: checkoutForm.fullName,
+          email: checkoutForm.email,
+          phone: checkoutForm.phoneNumber,
+        },
+        shippingAddress: {
+          postalCode: checkoutForm.postCode,
+          address: checkoutForm.address,
+          additionalInfo: checkoutForm.additionalInfo,
+          town: checkoutForm.town,
+          country: checkoutForm.country,
+        },
+        paymentMethod: checkoutForm.paymentMethod,
+      });
+
+      if (!result.success || !result.order) {
+        throw new Error(result.message || "Unable to create your order.");
+      }
+
+      const orderItems = Array.isArray(result.order.orderItems)
+        ? result.order.orderItems.map((item) => ({
+            _id: String(item.product),
+            title: item.title,
+            quantity: item.qty,
+            price: item.price,
+            productImg: item.productImg,
+          }))
+        : submittedItems;
+
+      navigate("/thankyou", {
+        replace: true,
+        state: {
+          orderItems,
+          orderId: result.order._id,
+          totalPrice: result.order.totalPrice,
+          currency: result.order.currency,
+        },
+      });
+      clearCart();
+    } catch (error) {
+      setSubmitError(
+        error.response?.data?.message ||
+          error.message ||
+          "Unable to place your order. Please try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -55,9 +118,10 @@ const CheckoutForm = () => {
             placeholder="Full Name"
             variant="border"
             type="text"
-            name="firstName"
-            value={checkoutForm.firstName}
+            name="fullName"
+            value={checkoutForm.fullName}
             onChange={handleChange}
+            required
           />
           <InputFields
             className={styles["checout-field"]}
@@ -65,19 +129,21 @@ const CheckoutForm = () => {
             placeholder="Email Address"
             variant="border"
             type="email"
-            name="Email"
-            value={checkoutForm.Email}
+            name="email"
+            value={checkoutForm.email}
             onChange={handleChange}
+            required
           />
           <InputFields
             className={styles["checout-field"]}
             label="Mobile Phone*"
             placeholder="Phone Number"
             variant="border"
-            type="text"
+            type="tel"
             name="phoneNumber"
             value={checkoutForm.phoneNumber}
             onChange={handleChange}
+            required
           />
         </div>
       </div>
@@ -96,6 +162,7 @@ const CheckoutForm = () => {
             value={checkoutForm.postCode}
             onChange={handleChange}
             suffixIcon={<SearchIcon />}
+            required
           />
           <InputFields
             className={styles["checout-field"]}
@@ -103,10 +170,11 @@ const CheckoutForm = () => {
             placeholder="Please select your address"
             variant="border"
             type="text"
-            name="Address"
-            value={checkoutForm.Address}
+            name="address"
+            value={checkoutForm.address}
             onChange={handleChange}
             suffixIcon={<ArrowDown />}
+            required
           />
           <InputFields
             className={styles["checout-field"]}
@@ -114,8 +182,8 @@ const CheckoutForm = () => {
             placeholder="Apartment, suite, etc (optional)"
             variant="border"
             type="text"
-            name="AdditionalInfo"
-            value={checkoutForm.AdditionalInfo}
+            name="additionalInfo"
+            value={checkoutForm.additionalInfo}
             onChange={handleChange}
           />
           <div className={styles["row-flex-field"]}>
@@ -128,6 +196,7 @@ const CheckoutForm = () => {
               name="town"
               value={checkoutForm.town}
               onChange={handleChange}
+              required
             />
             <InputFields
               className={styles["checout-field"]}
@@ -138,6 +207,7 @@ const CheckoutForm = () => {
               name="country"
               value={checkoutForm.country}
               onChange={handleChange}
+              required
             />
           </div>
         </div>
@@ -152,16 +222,17 @@ const CheckoutForm = () => {
               className={styles["checout-field"]}
               variant="border"
               type="radio"
-              name="payment"
-              value="bank"
-              checked={checkoutForm.payment === "bank"}
+              name="paymentMethod"
+              value="COD"
+              checked={checkoutForm.paymentMethod === "COD"}
               onChange={handleChange}
+              required
             >
               <div className={styles["radio-child"]}>
                 <span>
                   <Bank />
                 </span>
-                <span>Bank</span>
+                <span>Cash on delivery</span>
               </div>
             </InputFields>
 
@@ -169,90 +240,40 @@ const CheckoutForm = () => {
               className={styles["checout-field"]}
               variant="border"
               type="radio"
-              name="payment"
-              value="paypal"
-              checked={checkoutForm.payment === "paypal"}
+              name="paymentMethod"
+              value="JazzCash"
+              checked={checkoutForm.paymentMethod === "JazzCash"}
               onChange={handleChange}
+              disabled
             >
               <div className={styles["radio-child"]}>
                 <span>
                   <Paypal />
                 </span>
-                <span>Paypal</span>
+                <span>JazzCash (unavailable)</span>
               </div>
             </InputFields>
           </div>
 
-          {checkoutForm.payment === "bank" && (
-            <div className={styles["row-flex-field"]}>
-              <InputFields
-                className={styles["checout-field"]}
-                label="Sort Code*"
-                placeholder="e.g. 111111"
-                variant="border"
-                type="text"
-                name="sortCode"
-                value={checkoutForm.sortCode}
-                onChange={handleChange}
-              />
-              <InputFields
-                className={styles["checout-field"]}
-                label="Bank Account Number*"
-                placeholder="e.g. 12345678"
-                variant="border"
-                type="text"
-                name="AccountNumber"
-                value={checkoutForm.AccountNumber}
-                onChange={handleChange}
-              />
-            </div>
-          )}
+
         </div>
       </div>
 
-      {/* Postage */}
-      <div>
-        <h4 className={styles["form-title"]}>Postage</h4>
-        <div className={styles["fields-group"]}>
-          <InputFields
-            className={styles["checout-field"]}
-            variant="border"
-            type="radio"
-            name="postage"
-            value="label"
-            checked={checkoutForm.postage === "Pre-paid Postage"}
-            onChange={handleChange}
-          >
-            <div>
-              <p className={styles["radio-heading"]}>Postage Label</p>
-              <p className={styles["radio-desc"]}>
-                Receive a pre-paid postage label via email and attach it to your
-                own packaging.
-              </p>
-            </div>
-          </InputFields>
 
-          <InputFields
-            className={styles["checout-field"]}
-            variant="border"
-            type="radio"
-            name="postage"
-            value="pack"
-            checked={checkoutForm.postage === "postage-paid"}
-            onChange={handleChange}
-          >
-            <div>
-              <p className={styles["radio-heading"]}>Send me a postage pack</p>
-              <p className={styles["radio-desc"]}>
-                You’ll be sent a postage-paid pack ready to pop your device in.
-              </p>
-            </div>
-          </InputFields>
-        </div>
-      </div>
 
-      <Button size="md" variant="primary" type="submit">
-        Complete Your Order
+      {submitError && (
+        <p className={styles["submit-error"]} role="alert">
+          {submitError}
+        </p>
+      )}
+
+      <Button
+        size="md"
+        variant="primary"
+        type="submit"
+        disabled={isSubmitting || cartItems.length === 0}
+      >
+        {isSubmitting ? "Placing order..." : "Complete Your Order"}
       </Button>
     </form>
   );
