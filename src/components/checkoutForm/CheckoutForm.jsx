@@ -38,10 +38,11 @@ const CheckoutForm = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError("");
     setIsSubmitting(true);
+
     const submittedItems = cartItems.map((item) => ({
       _id: item._id,
       title: item.title,
@@ -50,7 +51,60 @@ const CheckoutForm = () => {
       productImg: item.productImg,
     }));
 
+    // Cart total calculate karne ke liye (agar aapke paas useCart mein total hai toh wahan se le lein)
+    const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0); 
+    // Note: Agar shipping fee bhi hai toh wo bhi totalPrice mein add kar lein
+
     try {
+      // --------------------------------------------------
+      // CASE 1: JAZZCASH PAYMENT FLOW
+      // --------------------------------------------------
+      if (checkoutForm.paymentMethod === "JazzCash") {
+        const paymentPayload = {
+          paymentMethod: "JazzCash",
+          totalPrice: totalPrice, // Total amount
+          userInfo: {
+            name: checkoutForm.fullName,
+            email: checkoutForm.email,
+            phone: checkoutForm.phoneNumber,
+          },
+          shippingAddress: {
+            postalCode: checkoutForm.postCode,
+            address: checkoutForm.address,
+            additionalInfo: checkoutForm.additionalInfo,
+            town: checkoutForm.town,
+            country: checkoutForm.country,
+          },
+          orderItems: submittedItems.map((item) => ({
+            product: item._id,
+            qty: item.quantity,
+          })),
+        };
+
+        // Backend ke unified payment route par request bhejiin
+        const response = await fetch("http://localhost:5000/api/payment/initiate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(paymentPayload),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Backend se hash aur gateway data mil gaya!
+          // Ab JazzCash gateway par auto-submit form ke zariye redirect karein
+          submitToJazzCashGateway(data.paymentUrl, data.gatewayData);
+          return; // Yahin rok dein taake aage ka COD code na chale
+        } else {
+          throw new Error(data.message || "Failed to initiate JazzCash payment.");
+        }
+      }
+
+      // --------------------------------------------------
+      // CASE 2: COD (CASH ON DELIVERY) FLOW (Purana Code)
+      // --------------------------------------------------
       const result = await createOrder({
         orderItems: submittedItems.map((item) => ({
           product: item._id,
@@ -85,18 +139,19 @@ const CheckoutForm = () => {
           }))
         : submittedItems;
 
-        const confirmationState = {
-          orderItems,
-          order: result.order,
-          orderId: result.order._id,
-          totalPrice: result.order.totalPrice,
-          currency: result.order.currency,
-        };
+      const confirmationState = {
+        orderItems,
+        order: result.order,
+        orderId: result.order._id,
+        totalPrice: result.order.totalPrice,
+        currency: result.order.currency,
+      };
 
       navigate("/thankyou", {
         replace: true,
-          state: confirmationState,
+        state: confirmationState,
       });
+
     } catch (error) {
       setSubmitError(
         error.response?.data?.message ||
@@ -104,9 +159,32 @@ const CheckoutForm = () => {
           "Unable to place your order. Please try again.",
       );
     } finally {
-      setIsSubmitting(false);
+      // Agar JazzCash hai toh loading state on rehne dein kyunki page redirect ho raha hai
+      if (checkoutForm.paymentMethod !== "JazzCash") {
+        setIsSubmitting(false);
+      }
     }
   };
+
+  // Helper function to submit data to JazzCash securely via POST form
+const submitToJazzCashGateway = (actionUrl, params) => {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = actionUrl;
+
+  for (const key in params) {
+    if (params.hasOwnProperty(key)) {
+      const hiddenField = document.createElement("input");
+      hiddenField.type = "hidden";
+      hiddenField.name = key;
+      hiddenField.value = params[key];
+      form.appendChild(hiddenField);
+    }
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+};
 
   return (
     <form onSubmit={handleSubmit} className={styles["checkout-form"]}>
@@ -246,13 +324,12 @@ const CheckoutForm = () => {
               value="JazzCash"
               checked={checkoutForm.paymentMethod === "JazzCash"}
               onChange={handleChange}
-              disabled
             >
               <div className={styles["radio-child"]}>
                 <span>
                   <Paypal />
                 </span>
-                <span>JazzCash (unavailable)</span>
+                <span>JazzCash</span>
               </div>
             </InputFields>
           </div>
