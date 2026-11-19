@@ -125,10 +125,10 @@ const Header = ({ variant = "header1" }) => {
                 </span>
               )}
             </button>
-            <span
+            <NavLink
+              to="/account"
               className={styles["icon-button"]}
-              role="img"
-              aria-label="Account"
+              aria-label="My account and orders"
               title="Account"
             >
               <svg
@@ -154,7 +154,7 @@ const Header = ({ variant = "header1" }) => {
                 />
               </svg>
               <span className={styles["visually-hidden"]}>Account</span>
-            </span>
+            </NavLink>
           </div>
         )}
       </div>

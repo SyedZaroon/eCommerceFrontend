@@ -15,6 +15,9 @@ import ThankYouPage from "./pages/thankYouPage/ThankYouPage";
 import Checkout from './pages/checkout/Checkout'
 import CollectionPage from "./Pages/collectionPage/CollectionPage";
 import CartPage from "./Pages/cart/CartPage";
+import AccountPage from "./Pages/account/AccountPage";
+import SignInPage from "./Pages/account/SignInPage";
+import RegisterPage from "./Pages/account/RegisterPage";
 
 const router = createBrowserRouter([
   {
@@ -60,6 +63,18 @@ const router = createBrowserRouter([
       {
         path: "/checkout",
         element: <Checkout />,
+      },
+      {
+        path: "/account",
+        element: <AccountPage />,
+      },
+      {
+        path: "/login",
+        element: <SignInPage />,
+      },
+      {
+        path: "/register",
+        element: <RegisterPage />,
       },
       {
         path: "*",
