@@ -10,7 +10,15 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../../hook/useCart";
 import { createOrder } from "../../services/order";
 
-const CheckoutForm = () => {
+const CheckoutForm = ({
+  shippingOptions,
+  shippingMethod,
+  onShippingMethodChange,
+  shippingOptionsLoading,
+  shippingOptionsError,
+  shippingPrice,
+  itemsPrice,
+}) => {
   const navigate = useNavigate();
   const { cartItems } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,7 +34,6 @@ const CheckoutForm = () => {
     town: "",
     country: "",
     paymentMethod: "COD",
-    postage: "",
   });
 
   const handleChange = (e) => {
@@ -51,10 +58,6 @@ const handleSubmit = async (e) => {
       productImg: item.productImg,
     }));
 
-    // Cart total calculate karne ke liye (agar aapke paas useCart mein total hai toh wahan se le lein)
-    const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0); 
-    // Note: Agar shipping fee bhi hai toh wo bhi totalPrice mein add kar lein
-
     try {
       // --------------------------------------------------
       // CASE 1: JAZZCASH PAYMENT FLOW
@@ -62,7 +65,8 @@ const handleSubmit = async (e) => {
       if (checkoutForm.paymentMethod === "JazzCash") {
         const paymentPayload = {
           paymentMethod: "JazzCash",
-          totalPrice: totalPrice, // Total amount
+          itemsPrice,
+          shippingMethod,
           userInfo: {
             name: checkoutForm.fullName,
             email: checkoutForm.email,
@@ -122,6 +126,7 @@ const handleSubmit = async (e) => {
           town: checkoutForm.town,
           country: checkoutForm.country,
         },
+        shippingMethod,
         paymentMethod: checkoutForm.paymentMethod,
       });
 
@@ -173,7 +178,7 @@ const submitToJazzCashGateway = (actionUrl, params) => {
   form.action = actionUrl;
 
   for (const key in params) {
-    if (params.hasOwnProperty(key)) {
+    if (Object.hasOwn(params, key)) {
       const hiddenField = document.createElement("input");
       hiddenField.type = "hidden";
       hiddenField.name = key;
@@ -340,6 +345,46 @@ const submitToJazzCashGateway = (actionUrl, params) => {
 
 
 
+      {/* Delivery */}
+      <div>
+        <h4 className={styles["form-title"]}>Delivery</h4>
+        <div className={styles["fields-group"]}>
+          {shippingOptionsLoading && <p>Loading delivery options...</p>}
+          {shippingOptionsError && (
+            <p className={styles["submit-error"]} role="alert">
+              {shippingOptionsError}
+            </p>
+          )}
+          {!shippingOptionsLoading &&
+            shippingOptions.map((option) => (
+              <InputFields
+                key={option.method}
+                className={styles["checout-field"]}
+                variant="border"
+                type="radio"
+                name="shippingMethod"
+                value={option.method}
+                checked={shippingMethod === option.method}
+                onChange={() => onShippingMethodChange(option.method)}
+                required
+              >
+                <div className={styles["radio-child"]}>
+                  <span>{option.label}</span>
+                  <span>
+                    {option.price === 0
+                      ? "-- Free"
+                      : `-- ${new Intl.NumberFormat("en-PK", {
+                          style: "currency",
+                          currency: "PKR",
+                          maximumFractionDigits: 0,
+                        }).format(option.price)}`}
+                  </span>
+                </div>
+              </InputFields>
+            ))}
+        </div>
+      </div>
+
       {submitError && (
         <p className={styles["submit-error"]} role="alert">
           {submitError}
@@ -350,7 +395,13 @@ const submitToJazzCashGateway = (actionUrl, params) => {
         size="md"
         variant="primary"
         type="submit"
-        disabled={isSubmitting || cartItems.length === 0}
+        disabled={
+          isSubmitting ||
+          cartItems.length === 0 ||
+          shippingOptionsLoading ||
+          Boolean(shippingOptionsError) ||
+          shippingPrice === undefined
+        }
       >
         {isSubmitting ? "Placing order..." : "Complete Your Order"}
       </Button>

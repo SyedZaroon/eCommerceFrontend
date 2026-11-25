@@ -1,13 +1,54 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./checkout.module.css";
 import CheckoutForm from "@/components/checkoutForm/CheckoutForm.jsx";
 import OrderDetails from "../../components/orderDetails/OrderDetails";
 import whyus from "../../data/whyUs";
 import { Navigate } from "react-router-dom";
 import { useCart } from "../../hook/useCart";
+import { getShippingOptions } from "../../services/order";
 
 const Checkout = () => {
   const { cartItems } = useCart();
+  const [shippingOptions, setShippingOptions] = useState([]);
+  const [shippingMethod, setShippingMethod] = useState("standard");
+  const [shippingCurrency, setShippingCurrency] = useState("PKR");
+  const [shippingOptionsLoading, setShippingOptionsLoading] = useState(true);
+  const [shippingOptionsError, setShippingOptionsError] = useState("");
+  const itemsPrice = cartItems.reduce(
+    (total, item) => total + Number(item.price) * Number(item.quantity),
+    0,
+  );
+  const selectedShipping = shippingOptions.find(
+    (option) => option.method === shippingMethod,
+  );
+
+  useEffect(() => {
+    let isCurrentRequest = true;
+    setShippingOptionsLoading(true);
+    setShippingOptionsError("");
+    getShippingOptions(itemsPrice)
+      .then(({ options, currency }) => {
+        if (isCurrentRequest) {
+          setShippingOptions(options);
+          setShippingCurrency(currency);
+        }
+      })
+      .catch((error) => {
+        if (isCurrentRequest) {
+          console.error("Failed to load shipping options:", error);
+          setShippingOptionsError(
+            error.response?.data?.message ||
+              "Unable to load shipping options. Please try again.",
+          );
+        }
+      })
+      .finally(() => {
+        if (isCurrentRequest) setShippingOptionsLoading(false);
+      });
+    return () => {
+      isCurrentRequest = false;
+    };
+  }, [itemsPrice]);
 
   if (cartItems.length === 0) {
     return <Navigate to="/cart" replace />;
@@ -17,16 +58,32 @@ const Checkout = () => {
     <div className={styles["checout-box"]}>
       
       <div className={styles["mobile-order-details"]}>
-        <OrderDetails />
+        <OrderDetails
+          currency={shippingCurrency}
+          shippingLabel={selectedShipping?.label}
+          shippingPrice={selectedShipping?.price}
+        />
       </div>
 
       <div className={styles["col-1"]}>
-        <CheckoutForm />
+        <CheckoutForm
+          shippingOptions={shippingOptions}
+          shippingMethod={shippingMethod}
+          onShippingMethodChange={setShippingMethod}
+          shippingOptionsLoading={shippingOptionsLoading}
+          shippingOptionsError={shippingOptionsError}
+          shippingPrice={selectedShipping?.price}
+          itemsPrice={itemsPrice}
+        />
       </div>
 
       <div className={styles["col-2"]}>
         <div className={styles["order-details"]}>
-          <OrderDetails />
+          <OrderDetails
+            currency={shippingCurrency}
+            shippingLabel={selectedShipping?.label}
+            shippingPrice={selectedShipping?.price}
+          />
         </div>
 
         <div className={styles["why-us"]}>

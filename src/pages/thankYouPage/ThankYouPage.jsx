@@ -62,8 +62,19 @@ const ThankYouPage = () => {
           </div>
           <OrderDetails
             items={orderItems}
-            currency={order?.currency || confirmation?.currency || "GBP"}
+            currency={order?.currency || confirmation?.currency || "PKR"}
             totalPrice={order?.totalPrice ?? confirmation?.totalPrice}
+            shippingPrice={order?.shippingPrice ?? confirmation?.shippingPrice}
+            shippingLabel={
+              order?.shippingPrice !== undefined ||
+              confirmation?.shippingPrice !== undefined
+                ? order?.shippingMethod === "next_day"
+                  ? "Next Day Delivery"
+                  : Number(order?.shippingPrice ?? confirmation?.shippingPrice) === 0
+                    ? "Free Shipping"
+                    : "Standard Delivery"
+                : ""
+            }
           />
           {order && (
             <dl className={styles.orderInformation}>

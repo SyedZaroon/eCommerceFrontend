@@ -5,12 +5,13 @@ container-type: inline-size;
     background-color: var(--color-gray-50);
     padding: 24px;
     border-radius: var(--radius-xl);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
 
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-
- 
-
+.section{
+    width: 100%;
 }
 
 .grid-flex{
@@ -70,62 +71,22 @@ container-type: inline-size;
     font-size: var(--fs-h-3);
     font-weight: 700;
 }
-.DesktopHide{
-    display: none;
+.shipping-line{
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--color-gray-600);
 }
 
-@container (max-width:800px) {
-    .order-details-box {
-        grid-template-columns: 1fr 1fr;
-        justify-items:center;
-        
-    }
-
-        .DesktopHide {
-            display: flex;
-            order: 0;
-        }
-
-        .sellig{
-            order: 1;
-        }
-
-    .order-review-box,
-        .MobileHide{
-        display: none;
-    }
-
-    
+.summary-lines{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-@container (max-width:648px){
-    .order-details-box {
-            grid-template-columns: 1fr;
-            justify-items: flex-start;
-            gap: 20px;
-        }
-
-        .selling-details-box{
-            flex-direction: row;
-            justify-content: space-between;
-            width: 100%;
-        }
-                   .selling-details-box .grid-flex {
-                       gap: 6px !important;
-                   }
-}
-
-@container (max-width:370px) {
-    .selling-details-box
-    {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .selling-details-box .grid-flex{
-        gap: 0px !important;
-    }
-        .order-condition p {
-            font-size: 13px;
-        }
+.summary-line{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
 }
