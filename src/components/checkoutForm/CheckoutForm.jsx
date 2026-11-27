@@ -9,6 +9,7 @@ import Paypal from "../../assets/icons/Paypal";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../hook/useCart";
 import { createOrder } from "../../services/order";
+import api from "../../services/api";
 
 const ONLINE_PAYMENT_METHODS = ["Stripe"];
 
@@ -19,7 +20,6 @@ const CheckoutForm = ({
   shippingOptionsLoading,
   shippingOptionsError,
   shippingPrice,
-  itemsPrice,
 }) => {
   const navigate = useNavigate();
   const { cartItems } = useCart();
@@ -65,59 +65,6 @@ const CheckoutForm = ({
     }));
 
     try {
-      // --------------------------------------------------
-      // CASE 1: ONLINE PAYMENT FLOW (Stripe, etc.)
-      // --------------------------------------------------
-      if (isOnlinePayment) {
-        const paymentPayload = {
-          paymentMethod: checkoutForm.paymentMethod,
-          itemsPrice,
-          shippingPrice,
-          shippingMethod,
-          userInfo: {
-            name: checkoutForm.fullName,
-            email: checkoutForm.email,
-            phone: checkoutForm.phoneNumber,
-          },
-          shippingAddress: {
-            postalCode: checkoutForm.postCode,
-            address: checkoutForm.address,
-            additionalInfo: checkoutForm.additionalInfo,
-            town: checkoutForm.town,
-            country: checkoutForm.country,
-          },
-          orderItems: submittedItems.map((item) => ({
-            product: item._id,
-            qty: item.quantity,
-          })),
-        };
-
-        const response = await fetch(
-          "http://localhost:5000/api/payment/initiate",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(paymentPayload),
-          },
-        );
-
-        const data = await response.json();
-
-        if (data.success && data.paymentUrl) {
-          window.location.href = data.paymentUrl;
-          return;
-        } else {
-          throw new Error(
-            data.message || `Failed to initiate ${checkoutForm.paymentMethod} payment.`,
-          );
-        }
-      }
-
-      // --------------------------------------------------
-      // CASE 2: COD (CASH ON DELIVERY) FLOW
-      // --------------------------------------------------
       const result = await createOrder({
         orderItems: submittedItems.map((item) => ({
           product: item._id,
@@ -141,6 +88,22 @@ const CheckoutForm = ({
 
       if (!result.success || !result.order?._id) {
         throw new Error(result.message || "Unable to create your order.");
+      }
+
+      if (isOnlinePayment) {
+        const { data } = await api.post("/payment/initiate", {
+          paymentMethod: checkoutForm.paymentMethod,
+          orderId: result.order._id,
+        });
+
+        if (data.success && data.paymentUrl) {
+          window.location.href = data.paymentUrl;
+          return;
+        }
+
+        throw new Error(
+          data.message || `Failed to initiate ${checkoutForm.paymentMethod} payment.`,
+        );
       }
 
       const orderItems = Array.isArray(result.order.orderItems)
@@ -172,9 +135,7 @@ const CheckoutForm = ({
           "Unable to place your order. Please try again.",
       );
     } finally {
-      if (!isOnlinePayment) {
-        setIsSubmitting(false);
-      }
+      setIsSubmitting(false);
     }
   };
 

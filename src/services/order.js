@@ -11,3 +11,10 @@ export const getShippingOptions = async (itemsPrice) => {
   });
   return response.data.data;
 };
+
+export const getStripeOrderConfirmation = async (sessionId) => {
+  const response = await api.get("/payment/confirmation", {
+    params: { session_id: sessionId },
+  });
+  return response.data.data;
+};
