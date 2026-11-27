@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../../hook/useCart";
 import { createOrder } from "../../services/order";
 
+const ONLINE_PAYMENT_METHODS = ["Stripe"];
+
 const CheckoutForm = ({
   shippingOptions,
   shippingMethod,
@@ -45,10 +47,14 @@ const CheckoutForm = ({
     }));
   };
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError("");
     setIsSubmitting(true);
+
+    const isOnlinePayment = ONLINE_PAYMENT_METHODS.includes(
+      checkoutForm.paymentMethod,
+    );
 
     const submittedItems = cartItems.map((item) => ({
       _id: item._id,
@@ -60,12 +66,13 @@ const handleSubmit = async (e) => {
 
     try {
       // --------------------------------------------------
-      // CASE 1: JAZZCASH PAYMENT FLOW
+      // CASE 1: ONLINE PAYMENT FLOW (Stripe, etc.)
       // --------------------------------------------------
-      if (checkoutForm.paymentMethod === "JazzCash") {
+      if (isOnlinePayment) {
         const paymentPayload = {
-          paymentMethod: "JazzCash",
+          paymentMethod: checkoutForm.paymentMethod,
           itemsPrice,
+          shippingPrice,
           shippingMethod,
           userInfo: {
             name: checkoutForm.fullName,
@@ -85,29 +92,31 @@ const handleSubmit = async (e) => {
           })),
         };
 
-        // Backend ke unified payment route par request bhejiin
-        const response = await fetch("http://localhost:5000/api/payment/initiate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          "http://localhost:5000/api/payment/initiate",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(paymentPayload),
           },
-          body: JSON.stringify(paymentPayload),
-        });
+        );
 
         const data = await response.json();
 
-        if (data.success) {
-          // Backend se hash aur gateway data mil gaya!
-          // Ab JazzCash gateway par auto-submit form ke zariye redirect karein
-          submitToJazzCashGateway(data.paymentUrl, data.gatewayData);
-          return; // Yahin rok dein taake aage ka COD code na chale
+        if (data.success && data.paymentUrl) {
+          window.location.href = data.paymentUrl;
+          return;
         } else {
-          throw new Error(data.message || "Failed to initiate JazzCash payment.");
+          throw new Error(
+            data.message || `Failed to initiate ${checkoutForm.paymentMethod} payment.`,
+          );
         }
       }
 
       // --------------------------------------------------
-      // CASE 2: COD (CASH ON DELIVERY) FLOW (Purana Code)
+      // CASE 2: COD (CASH ON DELIVERY) FLOW
       // --------------------------------------------------
       const result = await createOrder({
         orderItems: submittedItems.map((item) => ({
@@ -156,7 +165,6 @@ const handleSubmit = async (e) => {
         replace: true,
         state: confirmationState,
       });
-
     } catch (error) {
       setSubmitError(
         error.response?.data?.message ||
@@ -164,32 +172,11 @@ const handleSubmit = async (e) => {
           "Unable to place your order. Please try again.",
       );
     } finally {
-      // Agar JazzCash hai toh loading state on rehne dein kyunki page redirect ho raha hai
-      if (checkoutForm.paymentMethod !== "JazzCash") {
+      if (!isOnlinePayment) {
         setIsSubmitting(false);
       }
     }
   };
-
-  // Helper function to submit data to JazzCash securely via POST form
-const submitToJazzCashGateway = (actionUrl, params) => {
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = actionUrl;
-
-  for (const key in params) {
-    if (Object.hasOwn(params, key)) {
-      const hiddenField = document.createElement("input");
-      hiddenField.type = "hidden";
-      hiddenField.name = key;
-      hiddenField.value = params[key];
-      form.appendChild(hiddenField);
-    }
-  }
-
-  document.body.appendChild(form);
-  form.submit();
-};
 
   return (
     <form onSubmit={handleSubmit} className={styles["checkout-form"]}>
@@ -326,24 +313,20 @@ const submitToJazzCashGateway = (actionUrl, params) => {
               variant="border"
               type="radio"
               name="paymentMethod"
-              value="JazzCash"
-              checked={checkoutForm.paymentMethod === "JazzCash"}
+              value="Stripe"
+              checked={checkoutForm.paymentMethod === "Stripe"}
               onChange={handleChange}
             >
               <div className={styles["radio-child"]}>
                 <span>
                   <Paypal />
                 </span>
-                <span>JazzCash</span>
+                <span>Stripe</span>
               </div>
             </InputFields>
           </div>
-
-
         </div>
       </div>
-
-
 
       {/* Delivery */}
       <div>
